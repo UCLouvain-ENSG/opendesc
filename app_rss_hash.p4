@@ -44,8 +44,13 @@ control qdma_rss_compute(
                 }
             );
         }*/
-
+        //pipelien related metadata! might be usefull later
         meta.rss_hash = hash_input;
+
+        // descriptor filling
+        desc.cmpt8.user_data = hash_input[31:0];
+        desc.cmpt8.color = 0;
+        desc.cmpt8.err = 0;
     }
      apply {
         if (hdr.ipv4.isValid()) {
@@ -61,6 +66,10 @@ control qdma_deparser (packet_out packet, desc_out desc_pld,
         packet.emit(hdr.ipv4);
         packet.emit(hdr.udp);
         packet.emit(hdr.tcp);
+
+        // at the moment this is being applied for both tx and rx! i am not sure if completion is useful 
+        //for the case of nic to wire? timestamp of what time the nic put that packet at wire
+        desc_pld.emit(desc.cmpt8);
     }
     /*
     similarly deparse the completion notification to be communicated to the driver
