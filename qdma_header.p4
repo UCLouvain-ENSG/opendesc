@@ -1,3 +1,5 @@
+//h2c HOST to CARD
+//C2H CARD to HOST
 header qdma_h2c_desc_8B_h {
     bit<64> src_addr;
 }
@@ -26,6 +28,7 @@ header qdma_h2c_desc_64B_h {
     bit<64> timestamp;
 }
 
+// per-NIC specific context
 struct qdma_ctx_t {
     bit<2>  desc_size;   // 0:8B, 1:16B, 2:32B, 3:64B
     bit<3>  vf_id;
@@ -33,6 +36,7 @@ struct qdma_ctx_t {
     bit<6>  queue_id;
 }
 
+//possible descriptors
 struct desc_t {
     qdma_h2c_desc_8B_h  desc8;
     qdma_h2c_desc_16B_h desc16;
