@@ -1,0 +1,45 @@
+header qdma_h2c_desc_8B_h {
+    bit<64> src_addr;
+}
+
+header qdma_h2c_desc_16B_h {
+    bit<32> metadata;
+    bit<16> len;
+    bit<64> src_addr;
+}
+
+header qdma_h2c_desc_32B_h {
+    bit<32> metadata;
+    bit<16> len;
+    bit<64> src_addr;
+    bit<32> reserved;
+    bit<64> user_data;
+}
+
+header qdma_h2c_desc_64B_h {
+    bit<32> metadata;
+    bit<16> len;
+    bit<64> src_addr;
+    bit<64> user_data;
+    bit<64> user_data2;
+    bit<64> reserved;
+    bit<64> timestamp;
+}
+
+struct qdma_ctx_t {
+    bit<2>  desc_size;   // 0:8B, 1:16B, 2:32B, 3:64B
+    bit<3>  vf_id;
+    bit<1>  pf_id;
+    bit<6>  queue_id;
+}
+
+struct desc_t {
+    qdma_h2c_desc_8B_h  desc8;
+    qdma_h2c_desc_16B_h desc16;
+    qdma_h2c_desc_32B_h desc32;
+    qdma_h2c_desc_64B_h desc64;
+}
+
+struct qdma_context_t {
+    qdma_ctx_t qdma_ctx;
+}
