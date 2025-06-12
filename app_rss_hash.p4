@@ -48,9 +48,9 @@ control qdma_rss_compute(
         meta.rss_hash = hash_input;
 
         // descriptor filling
-        desc.cmpt8.user_data = hash_input[31:0];
-        desc.cmpt8.color = 0;
-        desc.cmpt8.err = 0;
+        desc.cmpt8.user_data[31:0] = hash_input[31:0];
+        //desc.cmpt8.color = 0;
+        //desc.cmpt8.err = 0;
     }
      apply {
         if (hdr.ipv4.isValid()) {
