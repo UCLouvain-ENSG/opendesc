@@ -3,6 +3,30 @@
 #define __OPENDESC_P4__
 #include <core.p4>
 
+// PNA DEF
+enum PNA_HashAlgorithm_t {
+  IDENTITY,
+  CRC32,
+  CRC32_CUSTOM,
+  CRC16,
+  CRC16_CUSTOM,
+  ONES_COMPLEMENT16,  /// One's complement 16-bit sum used for IPv4 headers,
+  TARGET_DEFAULT      /// target implementation defined
+}
+//PNA DEF
+extern Hash<O> {
+  Hash(PNA_HashAlgorithm_t algo);
+  O get_hash<D>(in D data);
+  O get_hash<T, D>(in T base, in D data, in T max);
+}
+//PNA DEF
+extern Checksum<W> {
+  Checksum(PNA_HashAlgorithm_t hash);
+  void clear();
+  void update<T>(in T data);
+  W    get();
+}
+
 
 extern desc_in {
     void extract<T>(out T hdr);
@@ -40,11 +64,12 @@ control CmptDeparser<typename PKT_T, typename C2H_CTX_T, typename DESC_T, typena
         in META_T     pipe_meta);
 
 package OpenDescNIC<
-        typename H2C_CTX_T,
-        typename C2H_CTX_T,
-        typename DESC_T,
-        typename PKT_T,
-        typename META_T>(
+          typename H2C_CTX_T,
+          typename C2H_CTX_T,
+          typename DESC_T,
+          typename PKT_T,
+          typename META_T>
+        (
         DescParser   dp,
         PktParser    pp,
         MainControl  mc,
