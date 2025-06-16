@@ -43,12 +43,12 @@ parser PktParser(packet_in pkt_in, out hdr_t ph) {
 control MainControl(inout hdr_t   ph,
                     inout h2c_desc_t  dh,
                     inout meta_t  m) {
+    Hash<bit<32>> hasher (PNA_HashAlgorithm_t.CRC32);
     apply {
         m.desc_size = dh.size;
         if (ph.ipv4.isValid() && ph.tcp.isValid()) {
-            hash(m.rss_hash, HashAlgorithm.crc32, 0,
-                 { ph.ipv4.srcAddr, ph.ipv4.dstAddr,
-                   ph.tcp.srcPort,  ph.tcp.dstPort });
+            bit<96> flow_id ={ ph.ipv4.srcAddr, ph.ipv4.dstAddr,  ph.tcp.srcPort,  ph.tcp.dstPort };
+            m.rss_hash = hasher.get<bit<96>>(flow_id);
         } else {
             m.rss_hash = 0;
         }
@@ -75,19 +75,19 @@ control CmptDeparser(cmpt_out cmpt_out,
     apply {
         switch(ctx.cmpt_size) {
             0: {
-                cmpt_8B_t c;  c.user_data = m.rss_hash[61:0];
+                cmpt_8B_t c;  c.user_data[31:0] = m.rss_hash;
                 c.color = 1; c.err = 0;  cmpt_out.emit(c);
             }
             1: {
-                cmpt_16B_t c; c.user_data = (bit<126>)m.rss_hash;
+                cmpt_16B_t c; c.user_data[31:0] = m.rss_hash;
                 c.color = 1; c.err = 0;  cmpt_out.emit(c);
             }
             2: {
-                cmpt_32B_t c; c.user_data = (bit<254>)m.rss_hash;
+                cmpt_32B_t c; c.user_data[31:0] = m.rss_hash;
                 c.color = 1; c.err = 0;  cmpt_out.emit(c);
             }
             3: {
-                cmpt_64B_t c; c.user_data = (bit<510>)m.rss_hash;
+                cmpt_64B_t c; c.user_data[31:0] = m.rss_hash;
                 c.color = 1; c.err = 0;  cmpt_out.emit(c);
             }
         }
