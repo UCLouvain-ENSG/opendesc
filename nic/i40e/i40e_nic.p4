@@ -21,7 +21,7 @@ control CmptDeparser(cmpt_out cmpt,
             d.mirr_fcoe        = 0;
             d.l2tag1           = 0;
             d.rss_fd_fcoe      = m.rss;
-            d.status_error_len = 0x1;
+            d.status_error_len = (1 << 0) | (3 << 12);
             d.ext_status       = 0;
             d.rsvd             = 0;
             d.l2tag2_1         = 0;
@@ -34,7 +34,7 @@ control CmptDeparser(cmpt_out cmpt,
             d.mirr_fcoe        = 0;
             d.l2tag1           = 0;
             d.rss_fd_fcoe      = m.rss;
-            d.status_error_len = 0x1;
+            d.status_error_len = (1 << 0) | (3 << 12);
             cmpt.emit(d);
         }
     }
